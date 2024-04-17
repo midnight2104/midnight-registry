@@ -1,5 +1,7 @@
 package com.midnight.registry;
 
+import com.midnight.registry.cluster.Cluster;
+import com.midnight.registry.cluster.Server;
 import com.midnight.registry.model.InstanceMeta;
 import com.midnight.registry.service.RegistryService;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +19,9 @@ import java.util.Map;
 public class MidnightRegistryController {
     @Autowired
     private RegistryService registryService;
+
+    @Autowired
+    private Cluster cluster;
 
     @RequestMapping("/reg")
     public InstanceMeta register(@RequestParam String service, @RequestBody InstanceMeta instance) {
@@ -55,4 +60,29 @@ public class MidnightRegistryController {
         return registryService.versions(services.split(","));
     }
 
+    @RequestMapping("/info")
+    public Server info() {
+        log.info(" ===> info {}", cluster.self());
+        return cluster.self();
+    }
+
+    @RequestMapping("/info")
+    public List<Server> cluster() {
+        log.info(" ===> cluster {}", cluster.getServers());
+        return cluster.getServers();
+    }
+
+    @RequestMapping("/leader")
+    public Server leader() {
+        log.info(" ===> leader {}", cluster.leader());
+        return cluster.leader();
+    }
+
+
+    @RequestMapping("/sl")
+    public Server sl() {
+        cluster.self().setLeader(true);
+        log.info(" ===> leader {}", cluster.self());
+        return cluster.self();
+    }
 }
