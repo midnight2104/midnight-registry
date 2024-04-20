@@ -1,0 +1,136 @@
+### 注册一个实例
+POST http://localhost:8486/reg?service=com.midnight.rpc.demo.api.UserService
+Content-Type: application/json
+
+{
+  "context": "midnight-rpc",
+  "host": "127.0.0.1",
+  "port": 8082,
+  "scheme": "http",
+  "status": false,
+  "parameters": {
+    "env": "dev",
+    "tag": "RED"
+  }
+}
+
+<> 2024-04-18T154514.200.json
+<> 2024-04-18T154412.200.json
+<> 2024-04-18T154409.200.json
+<> 2024-04-18T154408.200.json
+<> 2024-04-18T154406.200.json
+<> 2024-04-18T154402.200.json
+<> 2024-04-18T154400.200.json
+<> 2024-04-18T154358.200.json
+<> 2024-04-18T154357.200.json
+<> 2024-04-18T154355.200.json
+<> 2024-04-18T154354.200.json
+<> 2024-04-18T154352.200.json
+<> 2024-04-18T154206.200.json
+<> 2024-04-18T154201.200.json
+<> 2024-04-18T154140.200.json
+<> 2024-04-18T154019.200.json
+<> 2024-04-18T154016.200.json
+<> 2024-04-18T154011.200.json
+<> 2024-04-18T153902.200.json
+<> 2024-04-18T153857.200.json
+<> 2024-04-18T153853.200.json
+<> 2024-04-18T153851.200.json
+<> 2024-04-18T153849.200.json
+<> 2024-04-18T153848.200.json
+<> 2024-04-18T153846.200.json
+
+### 获取所有服务实例
+GET http://localhost:8486/findAll?service=com.midnight.rpc.demo.api.UserService
+
+<> 2024-04-18T154518.200.json
+<> 2024-04-18T154415.200.json
+<> 2024-04-18T154210.200.json
+<> 2024-04-18T154151.200.json
+<> 2024-04-18T154144.200.json
+<> 2024-04-18T154028.200.json
+<> 2024-04-18T153905.200.json
+
+### 取消注册一个实例
+POST http://localhost:8486/unreg?service=com.midnight.rpc.demo.api.UserService
+Content-Type: application/json
+
+{
+  "context": "midnight-rpc",
+  "host": "127.0.0.1",
+  "port": 8082,
+  "scheme": "http"
+}
+
+<> 2024-04-18T154507.200.json
+
+### 获取服务的版本
+POST http://localhost:8486/version?service=com.midnight.rpc.demo.api.UserService
+
+<> 2024-04-18T154522.200.json
+
+### 获取所有服务的版本
+POST http://localhost:8486/versions?services=com.midnight.rpc.demo.api.UserService
+
+
+<> 2024-04-18T154525.200.json
+<> 2024-04-18T154421.200.json
+<> 2024-04-18T154335.200.json
+<> 2024-04-18T154313.200.json
+<> 2024-04-18T154308.200.json
+<> 2024-04-18T154219.200.json
+<> 2024-04-18T153921.200.json
+
+
+<> 2024-04-18T153805.200.json
+
+### renew一个实例8081
+POST http://localhost:8486/renew?service=com.midnight.rpc.demo.api.UserService
+Content-Type: application/json
+
+{
+  "context": "midnight-rpc",
+  "host": "127.0.0.1",
+  "port": 8081,
+  "scheme": "http"
+}
+
+<> 2024-04-18T153924.200.json
+
+### renew一个实例8081
+POST http://localhost:8486/renew?service=com.midnight.rpc.demo.api.UserService
+Content-Type: application/json
+
+{
+  "context": "midnight-rpc",
+  "host": "127.0.0.1",
+  "port": 8081,
+  "scheme": "http"
+}
+
+
+### 获取服务的版本
+POST http://localhost:8486/version?service=com.midnight.rpc.demo.api.UserService
+
+<> 2024-04-18T154100.200.json
+
+
+### info
+GET http://localhost:8486/info
+
+<> 2024-04-18T154104.200.json
+### cluster
+GET http://localhost:8486/cluster
+
+<> 2024-04-18T154111.200.json
+### info 85
+GET http://localhost:8486/info
+
+<> 2024-04-18T154130.200.json
+### cluster 85
+GET http://localhost:8486/cluster
+### sl 85
+GET http://localhost:8486/sl
+
+<> 2024-04-18T154136.200.json
+

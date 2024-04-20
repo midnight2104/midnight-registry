@@ -41,6 +41,11 @@ public class MidnightRegistryController {
         return registryService.getAllInstances(service);
 
     }
+    @RequestMapping("/renew")
+    public long renew(@RequestParam String service, @RequestBody InstanceMeta instance) {
+        log.info(" ===> renew {} @ {} ", service, instance);
+        return registryService.renew(instance, service);
+    }
 
     @RequestMapping("/renews")
     public long renews(@RequestParam String services, @RequestBody InstanceMeta instance) {
@@ -66,7 +71,7 @@ public class MidnightRegistryController {
         return cluster.self();
     }
 
-    @RequestMapping("/info")
+    @RequestMapping("/cluster")
     public List<Server> cluster() {
         log.info(" ===> cluster {}", cluster.getServers());
         return cluster.getServers();

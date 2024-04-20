@@ -4,6 +4,7 @@ import com.midnight.registry.MidnightRegistryConfigProperties;
 import com.midnight.registry.http.HttpInvoker;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.commons.util.InetUtils;
 import org.springframework.cloud.commons.util.InetUtilsProperties;
@@ -28,10 +29,10 @@ public class Cluster {
 
     private Server myself;
 
-    private MidnightRegistryConfigProperties registryConfigProperties;
-
     @Getter
     private List<Server> servers;
+
+    private MidnightRegistryConfigProperties registryConfigProperties;
 
     private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 
@@ -49,27 +50,10 @@ public class Cluster {
             host = "127.0.0.1";
         }
 
-
         myself = new Server("http://" + host + ":" + port, true, false, -1L);
         log.debug("=====> myself = : " + myself);
 
-        List<Server> servers = new ArrayList<>();
-        for (String url : registryConfigProperties.getServerList()) {
-            if (url.contains("localhost")) {
-                url = url.replace("localhost", host);
-            } else if (url.contains("127.0.0.1")) {
-                url = url.replace("127.0.0.1", host);
-            }
-
-            if (url.equals(myself.getUrl())) {
-                servers.add(myself);
-            } else {
-                Server server = Server.builder().url(url).status(false).leader(false).version(-1L).build();
-                servers.add(server);
-            }
-        }
-
-        this.servers = servers;
+        this.servers = getServerList();
 
         executor.scheduleAtFixedRate(() -> {
             try {
@@ -85,10 +69,43 @@ public class Cluster {
 
     }
 
+    @NotNull
+    private List<Server> getServerList() {
+        List<Server> servers = new ArrayList<>();
+        for (String url : registryConfigProperties.getServerList()) {
+            if (url.contains("localhost")) {
+                url = url.replace("localhost", host);
+            } else if (url.contains("127.0.0.1")) {
+                url = url.replace("127.0.0.1", host);
+            }
+
+            if (url.equals(myself.getUrl())) {
+                servers.add(myself);
+            } else {
+                Server server = Server.builder().url(url).status(false).leader(false).version(-1L).build();
+                servers.add(server);
+            }
+        }
+        return servers;
+    }
+
+    private void electLeader() {
+        List<Server> masters = this.servers.stream().filter(Server::isStatus).filter(Server::isLeader).toList();
+        if (masters.isEmpty()) {
+            log.debug(" ===>>>  elect for no leader: " + servers);
+            elect();
+        } else if (masters.size() > 1) {
+            log.debug(" ===>>> elect for more than one leader: " + servers);
+            elect();
+        } else {
+            log.debug(" ===>>> no need election for leader: " + masters.get(0));
+        }
+    }
+
     /**
      * 每个实例自己选，保证最终选择是一样的
      */
-    private void electLeader() {
+    private void elect() {
         Server candidate = null;
         for (Server server : servers) {
             server.setLeader(false);
@@ -103,6 +120,13 @@ public class Cluster {
                     }
                 }
             }
+        }
+
+        if (candidate != null) {
+            candidate.setLeader(true);
+            log.debug(" ===>>> elect for leader: " + candidate);
+        } else {
+            log.debug(" ===>>> elect failed for no leaders: " + servers);
         }
     }
 

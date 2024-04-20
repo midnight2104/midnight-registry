@@ -1,12 +1,18 @@
 server:
-    port: 8484
+    port: 8486
 
 spring:
     application:
         name: midnight-registry
 
-kkregistry:
+midnightregistry:
     serverList:
         - http://127.0.0.1:8484
         - http://127.0.0.1:8485
         - http://127.0.0.1:8486
+
+
+logging:
+    level:
+        root: error
+        com.midnight.registry: debug
