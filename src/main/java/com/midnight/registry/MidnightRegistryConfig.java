@@ -15,6 +15,13 @@ public class MidnightRegistryConfig {
         return new MidnightRegistryService();
     }
 
+
+//    @Bean(initMethod = "start", destroyMethod = "stop")
+//    public HealthChecker healthChecker(@Autowired RegistryService registryService) {
+//        return new KKHealthChecker(registryService);
+//    }
+
+
     @Bean(initMethod = "init")
     public Cluster cluster(@Autowired MidnightRegistryConfigProperties registryConfigProperties) {
         return new Cluster(registryConfigProperties);
