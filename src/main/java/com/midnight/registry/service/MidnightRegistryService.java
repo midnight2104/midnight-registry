@@ -1,5 +1,6 @@
 package com.midnight.registry.service;
 
+import com.midnight.registry.cluster.Snapshot;
 import com.midnight.registry.model.InstanceMeta;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.CollectionUtils;
@@ -7,6 +8,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -19,7 +21,29 @@ public class MidnightRegistryService implements RegistryService {
 
     private final static MultiValueMap<String, InstanceMeta> REGISTRY = new LinkedMultiValueMap<>();
     private final static Map<String, Long> VERSIONS = new ConcurrentHashMap<>();
-    private final static AtomicLong VERSION = new AtomicLong(0);
+    public final static AtomicLong VERSION = new AtomicLong(0);
+
+    public static synchronized long restore(Snapshot snapshot) {
+        REGISTRY.clear();
+        REGISTRY.addAll(snapshot.getRegistry());
+
+        VERSIONS.clear();
+        VERSIONS.putAll(snapshot.getVersions());
+
+        TIMESTAMPS.clear();
+        TIMESTAMPS.putAll(snapshot.getTimestamps());
+
+        VERSION.set(snapshot.getVersion());
+        return snapshot.getVersion();
+    }
+
+    public static synchronized Snapshot snapshot() {
+        LinkedMultiValueMap<String, InstanceMeta> registry = new LinkedMultiValueMap<>();
+        registry.addAll(REGISTRY);
+        HashMap<String, Long> versions = new HashMap<>(VERSIONS);
+        HashMap<String, Long> timestamps = new HashMap<>(TIMESTAMPS);
+        return new Snapshot(registry, versions, timestamps, VERSION.get());
+    }
 
     @Override
     public InstanceMeta register(String service, InstanceMeta instance) {

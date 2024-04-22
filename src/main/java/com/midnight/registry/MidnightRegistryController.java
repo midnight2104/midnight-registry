@@ -2,7 +2,9 @@ package com.midnight.registry;
 
 import com.midnight.registry.cluster.Cluster;
 import com.midnight.registry.cluster.Server;
+import com.midnight.registry.cluster.Snapshot;
 import com.midnight.registry.model.InstanceMeta;
+import com.midnight.registry.service.MidnightRegistryService;
 import com.midnight.registry.service.RegistryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,12 +28,14 @@ public class MidnightRegistryController {
     @RequestMapping("/reg")
     public InstanceMeta register(@RequestParam String service, @RequestBody InstanceMeta instance) {
         log.info(" ===> register {} @ {} ", service, instance);
+        checkLeader();
         return registryService.register(service, instance);
     }
 
     @RequestMapping("/unreg")
     public InstanceMeta unregister(@RequestParam String service, @RequestBody InstanceMeta instance) {
         log.info(" ===> unregister {} @ {} ", service, instance);
+        checkLeader();
         return registryService.unregister(service, instance);
     }
 
@@ -41,9 +45,11 @@ public class MidnightRegistryController {
         return registryService.getAllInstances(service);
 
     }
+
     @RequestMapping("/renew")
     public long renew(@RequestParam String service, @RequestBody InstanceMeta instance) {
         log.info(" ===> renew {} @ {} ", service, instance);
+        checkLeader();
         return registryService.renew(instance, service);
     }
 
@@ -89,5 +95,16 @@ public class MidnightRegistryController {
         cluster.self().setLeader(true);
         log.info(" ===> leader {}", cluster.self());
         return cluster.self();
+    }
+
+    @RequestMapping("/snapshot")
+    public Snapshot snapshot() {
+        return MidnightRegistryService.snapshot();
+    }
+
+    private void checkLeader() {
+        if (!cluster.self().isLeader()) {
+            throw new RuntimeException("current server is not a leader, the leader is " + cluster.leader().getUrl());
+        }
     }
 }
