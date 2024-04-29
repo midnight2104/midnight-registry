@@ -1,7 +1,6 @@
 package com.midnight.registry.cluster;
 
 import com.midnight.registry.MidnightRegistryConfigProperties;
-import com.midnight.registry.http.HttpInvoker;
 import com.midnight.registry.service.MidnightRegistryService;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -12,9 +11,6 @@ import org.springframework.cloud.commons.util.InetUtilsProperties;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 注册中心集群
@@ -75,7 +71,6 @@ public class Cluster {
         }
         return servers;
     }
-
 
 
     public Server self() {
